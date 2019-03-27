@@ -9,8 +9,11 @@ def have_i_pushed_my_code_yet():
         message = 'ERROR The last commit has not been pushed yet'
     no_unstaged_files = os.system('test "$(git diff --name-only)" = ""')
     if no_unstaged_files != 0:
-        message = 'ERROR There are unstaged files'    
-    return last_commit_pushed + no_unstaged_files, message
+        message = 'ERROR There are unstaged files'
+    staged_files_not_commit_yet = os.system("test $(git diff --cached --name-only |  wc -l) = 0")
+    if staged_files_not_commit_yet:
+        message = 'ERROR Staged files are not committed yet'
+    return last_commit_pushed + no_unstaged_files + staged_files_not_commit_yet, message
 
 def main():
     errorcode, message = have_i_pushed_my_code_yet()
